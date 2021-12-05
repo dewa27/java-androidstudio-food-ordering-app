@@ -7,6 +7,7 @@
     </item>
     <item android:state_pressed="true">
         <shape android:shape="oval">
+            <stroke android:width="2dp" android:color="#DCC8C8"/>
             <solid android:color="@color/orange_primary_shade"/>
         </shape>
     </item>

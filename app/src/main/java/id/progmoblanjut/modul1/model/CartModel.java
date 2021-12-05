@@ -1,51 +1,62 @@
 package id.progmoblanjut.modul1.model;
 
 public class CartModel {
-    private int cart_id;
+    private int id_cart;
     private FoodModel food;
-    private int cust_id;
-    private int qty;
+    private int id_customer;
+    private int cart_qty;
+    private String notes;
 
-    public CartModel(int cart_id, FoodModel food, int cust_id, int qty) {
-        this.cart_id = cart_id;
+    public CartModel(int id_cart, FoodModel food, int id_customer, int cart_qty,String notes) {
+        this.id_cart = id_cart;
         this.food = food;
-        this.cust_id = cust_id;
-        this.qty = qty;
+        this.id_customer = id_customer;
+        this.cart_qty = cart_qty;
+        this.notes=notes;
     }
 
-    public int getCart_id(){
-        return cart_id;
+    public int getId_cart() {
+        return id_cart;
     }
 
-    public void setCart_id(int cart_id){
-        this.cart_id = cart_id;
+    public void setId_cart(int id_cart) {
+        this.id_cart = id_cart;
     }
 
-    public FoodModel getFood(){
+    public FoodModel getFood() {
         return food;
     }
 
-    public void setFood(FoodModel food){
+    public void setFood(FoodModel food) {
         this.food = food;
     }
 
-    public int getCust_id(){
-        return cust_id;
+    public int getId_customer() {
+        return id_customer;
     }
 
-    public void setCust_id(int cust_id){
-        this.cust_id = cust_id;
+    public void setId_customer(int id_customer) {
+        this.id_customer = id_customer;
     }
 
-    public int getQty(){
-        return qty;
+    public int getCart_qty() {
+        return cart_qty;
     }
 
-    public void setQty(int qty){
-        this.qty = qty;
+    public void setCart_qty(int cart_qty) {
+        this.cart_qty = cart_qty;
     }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     @Override
     public String toString() {
-        return "cart_id"+ this.cart_id + "\n" + "qty : " + this.qty + "\nfood : "+ this.food;
+        return "cart_id"+ this.id_cart + "\n" + "qty : " + this.cart_qty + "\nfood : "+ this.food;
     }
 }

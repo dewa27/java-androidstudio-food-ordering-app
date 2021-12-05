@@ -48,11 +48,13 @@ public class CartActivity extends AppCompatActivity {
         linearLayout=findViewById(R.id.linearCart);
         cartEmpty=findViewById(R.id.textView12);
         db=new DbHelper(this);
+
         Gson gson=new Gson();
         SharedPreferences mPrefs= this.getSharedPreferences("pref",0);
         String json = mPrefs.getString("loggedCustomerData", "");
         CustomerModel loggedCustomerData = gson.fromJson(json, CustomerModel.class);
-        cartData=db.getCartData(loggedCustomerData.getCust_id());
+
+        cartData=db.getCartData(loggedCustomerData.getId_customer());
         btnNavView.setSelectedItemId(R.id.cart);
         btnNavView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener(){
             @Override
@@ -79,12 +81,11 @@ public class CartActivity extends AppCompatActivity {
 //            Toast.makeText(getApplicationContext(), "Data berisi", Toast.LENGTH_SHORT).show();
 //            Toast.makeText(getApplicationContext(), cartData.get(0).toString(),Toast.LENGTH_SHORT).show();
             cartEmpty.setVisibility(View.GONE);
-            Toast.makeText(getApplicationContext(), Integer.toString(loggedCustomerData.getCust_id()),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), Integer.toString(loggedCustomerData.getId_customer()),Toast.LENGTH_SHORT).show();
             RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 1);
             cartAdapter= new CartAdapter(this,cartData,this);
             cartRecyclerView.setLayoutManager(mLayoutManager);
             cartRecyclerView.setAdapter(cartAdapter);
-            Log.d("list", cartData.get(0).toString());
         }
     }
 

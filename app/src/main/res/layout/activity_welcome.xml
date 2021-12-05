@@ -54,9 +54,9 @@
         android:layout_height="match_parent"
         android:background="@drawable/card"
         android:orientation="vertical"
-        android:paddingLeft="30dp"
+        android:paddingLeft="10dp"
         android:paddingTop="30dp"
-        android:paddingRight="30dp">
+        android:paddingRight="10dp">
 
         <EditText
             android:id="@+id/namaPelanggan"

@@ -16,9 +16,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="20dp"
+            android:paddingLeft="10dp"
             android:paddingTop="15dp"
-            android:paddingRight="20dp"
+            android:paddingRight="10dp"
             android:paddingBottom="60dp">
 
             <TextView
@@ -70,7 +70,6 @@
         app:itemIconTint="@drawable/bottom_nav_item"
         app:itemTextColor="@drawable/bottom_nav_item"
         app:layout_constraintBottom_toBottomOf="@+id/scrollView3"
-        app:layout_constraintEnd_toEndOf="@+id/scrollView2"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_bot_nav" >
 

@@ -1,6 +1,7 @@
 package id.progmoblanjut.modul1.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -18,6 +19,9 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import id.progmoblanjut.modul1.AddToCartActivity;
+import id.progmoblanjut.modul1.MainActivity;
+import id.progmoblanjut.modul1.WelcomeActivity;
 import id.progmoblanjut.modul1.database.DbHelper;
 import id.progmoblanjut.modul1.model.CustomerModel;
 import id.progmoblanjut.modul1.model.FoodModel;
@@ -48,12 +52,17 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.food_name_ph.setText(foodData.get(position).getFood_name());
-        holder.food_price_ph.setText(foodData.get(position).getFood_price(1));
-        holder.food_pic_ph.setImageResource(foodData.get(position).getFood_pic());
+        holder.price_ph.setText(foodData.get(position).getPrice(1));
+        holder.food_filename_ph.setImageResource(Integer.parseInt(foodData.get(position).getFood_filename()));
         holder.add_to_cart.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                db.insertCartData(foodData.get(position).getFood_id(),loggedCustomerData.getCust_id());
+            public void onClick(View v){
+                Gson gson = new Gson();
+                String json=gson.toJson(foodData.get(position));
+                Intent intent = new Intent(holder.add_to_cart.getContext(), AddToCartActivity.class);
+                intent.putExtra("food_model", json);
+                holder.add_to_cart.getContext().startActivity(intent);
+//                db.insertCartData(foodData.get(position).getIdFood(),loggedCustomerData.getId_customer());
                 Toast.makeText(v.getContext(), "Data masooook", Toast.LENGTH_LONG).show();
             }
         });
@@ -63,15 +72,15 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         return foodData.size();
     }
     public class ViewHolder extends RecyclerView.ViewHolder{
-        TextView food_name_ph,food_price_ph;
-        ImageView food_pic_ph;
+        TextView food_name_ph,price_ph;
+        ImageView food_filename_ph;
         Button add_to_cart;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.food_name_ph = itemView.findViewById(R.id.food_name);
-            this.food_price_ph = itemView.findViewById(R.id.food_price);
-            this.food_pic_ph = itemView.findViewById(R.id.food_pic);
+            this.price_ph = itemView.findViewById(R.id.price);
+            this.food_filename_ph = itemView.findViewById(R.id.food_filename);
             this.add_to_cart=itemView.findViewById(R.id.button);
         }
     }

@@ -3,33 +3,46 @@ package id.progmoblanjut.modul1.model;
 import java.io.Serializable;
 
 public class CustomerModel implements Serializable {
-    private int cust_id;
-    private String nama;
-    private int jml_orang;
+    private int id_customer;
+    private String customer_name;
+    private int customer_qty;
     private String status_makan;
     private String rekomendasi;
+    private String created_at;
+    private String updated_at;
 
-    public CustomerModel(String nama, int jml_orang, String status_makan, String rekomendasi) {
-        this.nama = nama;
-        this.jml_orang = jml_orang;
+    public CustomerModel(int id_customer, String customer_name, int customer_qty, String status_makan, String rekomendasi, String created_at, String updated_at) {
+        this.id_customer = id_customer;
+        this.customer_name = customer_name;
+        this.customer_qty = customer_qty;
         this.status_makan = status_makan;
         this.rekomendasi = rekomendasi;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
-    public String getNama() {
-        return nama;
+    public int getId_customer() {
+        return id_customer;
     }
 
-    public void setNama(String nama) {
-        this.nama = nama;
+    public void setId_customer(int id_customer) {
+        this.id_customer = id_customer;
     }
 
-    public int getJml_orang() {
-        return jml_orang;
+    public String getCustomer_name() {
+        return customer_name;
     }
 
-    public void setJml_orang(int jml_orang) {
-        this.jml_orang = jml_orang;
+    public void setCustomer_name(String customer_name) {
+        this.customer_name = customer_name;
+    }
+
+    public int getCustomer_qty() {
+        return customer_qty;
+    }
+
+    public void setCustomer_qty(int customer_qty) {
+        this.customer_qty = customer_qty;
     }
 
     public String getStatus_makan() {
@@ -48,10 +61,19 @@ public class CustomerModel implements Serializable {
         this.rekomendasi = rekomendasi;
     }
 
-    public int getCust_id() {
-        return cust_id;
+    public String getCreated_at() {
+        return created_at;
     }
-    public void setCust_id(int cust_id) {
-        this.cust_id = cust_id;
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
     }
 }
