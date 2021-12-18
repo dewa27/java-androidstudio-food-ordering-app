@@ -46,7 +46,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull CartAdapter.ViewHolder holder, int position) {
-        String jsonCartModel = gson.toJson(cartData.get(position));
         holder.nama.setText(cartData.get(position).getFood().getFood_name());
         holder.harga.setText(cartData.get(position).getFood().getPrice(1));
         holder.qty.setText(Integer.toString(cartData.get(position).getCart_qty()));
@@ -56,7 +55,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
         holder.incBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                db.updateCartData(cartData.get(position).getId_cart(),cartData.get(position).getCart_qty()+1);
+                db.updateCartData(cartData.get(position).getId_cart(),cartData.get(position).getCart_qty()+1,"");
                 cartData.get(position).setCart_qty(cartData.get(position).getCart_qty()+1);
                 holder.qty.setText(""+cartData.get(position).getCart_qty());
                 holder.total.setText(cartData.get(position).getFood().getPrice(cartData.get(position).getCart_qty()));
@@ -65,6 +64,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
         holder.editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String jsonCartModel = gson.toJson(cartData.get(position));
                 Intent intent = new Intent(v.getContext(), EditNoteActivity.class);
                 intent.putExtra("cart_model",jsonCartModel);
                 v.getContext().startActivity(intent);
@@ -79,7 +79,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
                         notifyItemRemoved(position);
                     };
                 }else{
-                    db.updateCartData(cartData.get(position).getId_cart(),cartData.get(position).getCart_qty()-1);
+                    db.updateCartData(cartData.get(position).getId_cart(),cartData.get(position).getCart_qty()-1,"");
                     cartData.get(position).setCart_qty(cartData.get(position).getCart_qty()-1);
                     holder.qty.setText(""+cartData.get(position).getCart_qty());
                     holder.total.setText(cartData.get(position).getFood().getPrice(cartData.get(position).getCart_qty()));
@@ -91,6 +91,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     public int getItemCount() {
         return cartData.size();
     }
+
     public class ViewHolder extends RecyclerView.ViewHolder{
         private TextView harga,qty,note,nama,total;
         private ImageButton incBtn,decBtn,editBtn;

@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -24,13 +23,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.gson.Gson;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import id.progmoblanjut.modul1.adapter.FoodAdapter;
 import id.progmoblanjut.modul1.database.DbHelper;
+import id.progmoblanjut.modul1.database.FoodOrderingAPI;
 import id.progmoblanjut.modul1.model.CustomerModel;
 import id.progmoblanjut.modul1.model.FoodModel;
 import id.progmoblanjut.modul1.model.PostModel;
@@ -54,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private String keyword="";
     private ProgressBar loadingProgressBar;
     private Call<ArrayList<FoodModel>> call;
-    private Boolean loadAPIStatus;
+    private Boolean loadAPIStatus=false;
+    private String baseUrl="http://192.168.0.102:8000/api/";
     ArrayList<FoodModel> foodDummyData= new ArrayList<FoodModel>();
     ArrayList<FoodModel> forYouDummyData= new ArrayList<FoodModel>();
     ArrayList<PostModel> postData=new ArrayList<PostModel>();
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         searchText=findViewById(R.id.searchText);
         loadingProgressBar=findViewById(R.id.progressBar4);
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl("http://192.168.0.102:8000/api/").addConverterFactory(GsonConverterFactory.create()).build();
+        Retrofit retrofit= new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create()).build();
         foodOrderingAPI=retrofit.create(FoodOrderingAPI.class);
         Gson gson = new Gson();
         mPrefs= this.getSharedPreferences("pref",0);
@@ -186,11 +186,15 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.fnb:
                         return true;
                     case R.id.cart:
-                        startActivity(new Intent(getApplicationContext(),CartActivity.class));
+                        Intent intent2= new Intent(getApplicationContext(),CartActivity.class);
+//                        intent2.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(intent2);
                         overridePendingTransition(0,0);
                         return true;
                     case R.id.your_food:
-                        startActivity(new Intent(getApplicationContext(),YourFoodActivity.class));
+                        Intent intent3= new Intent(getApplicationContext(), PaymentActivity.class);
+                        intent3.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(intent3);
                         overridePendingTransition(0,0);
                         return true;
                 }
@@ -214,7 +218,6 @@ public class MainActivity extends AppCompatActivity {
                                 }else{
                                     keyword=s.toString();
                                 }
-                                loadAPIStatus=true;
                                 getFood();
                             }
                         }, DELAY
@@ -229,31 +232,23 @@ public class MainActivity extends AppCompatActivity {
 //        db.makeFoodMasterData();
 //        String rec_category_id_str= getIntent().getStringExtra("rek_menu_id_str");
 //        Toast.makeText(getApplicationContext(), "Arr Str : " + rec_category_id_str, Toast.LENGTH_LONG).show();
-        foodDummyData=db.getFoodMasterData();
-        forYouDummyData=db.getFoodMasterData();
+//        foodDummyData=db.getFoodMasterData();
+//        forYouDummyData=db.getFoodMasterData();
         getFood();
-        getRecommendedFood(loggedCustomerData.getRekomendasi());
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+        getRecommendedFood(loggedCustomerData.getRekomendasi_id());
     }
 
     protected void getFood(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!loadAPIStatus) {
-                    foodRecyclerView.setVisibility(View.GONE);
-                    loadingProgressBar.setVisibility(View.VISIBLE);
-                }
+                foodRecyclerView.setVisibility(View.GONE);
+                loadingProgressBar.setVisibility(View.VISIBLE);
             }
         });
         StringBuilder str = new StringBuilder("");
         // Traversing the ArrayList
-        category_arr.add("1");
+//        category_arr.add("1");
         for (String eachstring : category_arr) {
 
             // Each element in ArrayList is appended
@@ -285,32 +280,37 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Code : " + Integer.toString(response.code()), Toast.LENGTH_LONG).show();
                     return;
                 }
+                foodDummyData=response.body();
+                Log.d("panjang_data",Integer.toString(foodDummyData.size()));
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         foodRecyclerView.setVisibility(View.VISIBLE);
                         loadingProgressBar.setVisibility(View.GONE);
+                        foodAdapter= new FoodAdapter(getApplicationContext(),foodDummyData);
+                        foodRecyclerView.setAdapter(foodAdapter);
+                        loadAPIStatus=false;
                     }
                 });
-                foodDummyData=response.body();
             }
 
             @Override
             public void onFailure(Call<ArrayList<FoodModel>> call, Throwable t) {
                 Log.d("api",t.getMessage());
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                foodDummyData=db.getFoodMasterData();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         foodRecyclerView.setVisibility(View.VISIBLE);
                         loadingProgressBar.setVisibility(View.GONE);
+                        foodAdapter= new FoodAdapter(getApplicationContext(),foodDummyData);
+                        foodRecyclerView.setAdapter(foodAdapter);
+                        loadAPIStatus=false;
                     }
                 });
-                foodDummyData=db.getFoodMasterData();
             }
         });
-        foodAdapter= new FoodAdapter(getApplicationContext(),foodDummyData);
-        foodRecyclerView.setAdapter(foodAdapter);
     }
     protected void getRecommendedFood(String recommendedCategoryIdStr){
         // Condition check to remove the last comma
@@ -328,7 +328,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 forYouRecyclerView.setVisibility(View.VISIBLE);
                 forYouDummyData=response.body();
+                forYouAdapter= new FoodAdapter(getApplicationContext(),forYouDummyData);
+                forYouRecyclerView.setAdapter(forYouAdapter);
             }
+
 
             @Override
             public void onFailure(Call<ArrayList<FoodModel>> call, Throwable t) {
@@ -336,39 +339,51 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
                 forYouRecyclerView.setVisibility(View.VISIBLE);
                 forYouDummyData=db.getFoodMasterData();
+                forYouAdapter= new FoodAdapter(getApplicationContext(),forYouDummyData);
+                forYouRecyclerView.setAdapter(forYouAdapter);
             }
         });
-        forYouAdapter= new FoodAdapter(getApplicationContext(),forYouDummyData);
-        forYouRecyclerView.setAdapter(forYouAdapter);
     }
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Toast.makeText(getApplicationContext(), "Method onStart ", Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         btnNavView.setSelectedItemId(R.id.fnb);
+        Toast.makeText(getApplicationContext(), "Method onResume ", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-//        Toast.makeText(getApplicationContext(), "Selamat datang kembali " + String.valueOf(loggedCustomerData.getNama()) + "!", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Method onPause ", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Toast.makeText(getApplicationContext(), "Method onStop ", Toast.LENGTH_SHORT).show();
 //        forYouAdapter.clearData();
 //        foodAdapter.clearData();
 //        mPrefs.edit().clear().commit();
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Toast.makeText(getApplicationContext(), "Selamat Tinggal " +loggedCustomerData.getCustomer_name() + "!", Toast.LENGTH_SHORT).show();
+    }
 
-//    @Override
-//    protected void onDestroy() {
-////        super.onDestroy();
-////        Toast.makeText(getApplicationContext(), "Sampai jumpa " + String.valueOf(loggedCustomerData.getNama()) + "!", Toast.LENGTH_LONG).show();
-//    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        overridePendingTransition(0,0);
+    }
+
 }

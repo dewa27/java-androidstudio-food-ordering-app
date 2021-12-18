@@ -12,7 +12,7 @@
     </item>
         <item
             android:id="@+id/your_food"
-            android:title="Your Food"
-            android:icon="@drawable/ic_baseline_food_bank_24">
+            android:title="Your Payment"
+            android:icon="@drawable/ic_baseline_account_balance_wallet_24">
         </item>
 </menu>

@@ -13,16 +13,20 @@
         android:theme="@style/Theme.Modul1"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".CheckoutActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddToCartActivity"
             android:exported="false" />
         <activity
             android:name=".EditNoteActivity"
             android:exported="false" />
-        <activity android:name=".YourFoodActivity" />
+        <activity android:name=".PaymentActivity" />
         <activity android:name=".CartActivity" />
         <activity android:name=".WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -8,8 +8,10 @@ public class CustomerModel implements Serializable {
     private int customer_qty;
     private String status_makan;
     private String rekomendasi;
+    private String rekomendasi_id;
     private String created_at;
     private String updated_at;
+    private String uuid;
 
     public CustomerModel(int id_customer, String customer_name, int customer_qty, String status_makan, String rekomendasi, String created_at, String updated_at) {
         this.id_customer = id_customer;
@@ -75,5 +77,21 @@ public class CustomerModel implements Serializable {
 
     public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getRekomendasi_id() {
+        return rekomendasi_id;
+    }
+
+    public void setRekomendasi_id(String rekomendasi_id) {
+        this.rekomendasi_id = rekomendasi_id;
     }
 }

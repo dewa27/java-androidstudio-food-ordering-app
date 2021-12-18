@@ -1,11 +1,13 @@
 package id.progmoblanjut.modul1;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,7 @@ public class EditNoteActivity extends AppCompatActivity {
     private EditText et_notes;
     private ImageButton dec_btn,inc_btn;
     private Button addtocart_btn;
+    private ImageView imageFood;
     private int qty;
     private DbHelper db;
 
@@ -38,6 +41,7 @@ public class EditNoteActivity extends AppCompatActivity {
         dec_btn = findViewById(R.id.imgBtnMin);
         inc_btn = findViewById(R.id.imgBtnPlus);
         addtocart_btn = findViewById(R.id.btnAddToCart);
+        imageFood=findViewById(R.id.imageView3);
 
         db = new DbHelper(this);
         Gson gson = new Gson();
@@ -54,6 +58,8 @@ public class EditNoteActivity extends AppCompatActivity {
         tv_food_price.setText(cartModel.getFood().getPrice(1));
         tv_food_qty.setText(Integer.toString(qty));
         et_notes.setText(cartModel.getNotes());
+        imageFood.setImageResource(R.drawable.tipatcantok);
+
         dec_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +86,10 @@ public class EditNoteActivity extends AppCompatActivity {
         addtocart_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Berhasil ditambahkan ke keranjang", Toast.LENGTH_SHORT).show();
+                db.updateCartData(cartModel.getId_cart(),qty,et_notes.getText().toString());
+                Toast.makeText(getApplicationContext(),"Berhasil diupdate",Toast.LENGTH_SHORT).show();
+                Intent intent= new Intent(v.getContext(),CartActivity.class);
+                startActivity(intent);
                 finish();
             }
         });

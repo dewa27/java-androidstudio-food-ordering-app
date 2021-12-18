@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class AddToCartActivity extends AppCompatActivity {
     private EditText et_notes;
     private ImageButton dec_btn,inc_btn;
     private Button addtocart_btn;
+    private ImageView imageFood;
     private int qty;
     private DbHelper db;
     @Override
@@ -37,6 +39,7 @@ public class AddToCartActivity extends AppCompatActivity {
         dec_btn=findViewById(R.id.imgBtnMin);
         inc_btn=findViewById(R.id.imgBtnPlus);
         addtocart_btn=findViewById(R.id.btnAddToCart);
+        imageFood=findViewById(R.id.imageView3);
 
         db=new DbHelper(this);
         Gson gson=new Gson();
@@ -50,6 +53,8 @@ public class AddToCartActivity extends AppCompatActivity {
         tv_food_name.setText(foodModel.getFood_name());
         tv_description.setText(foodModel.getDescription());
         tv_food_price.setText(foodModel.getPrice(1));
+        new DownloadImageTask((ImageView) imageFood).execute(DownloadImageTask.imageUrl+foodModel.getFood_filename());
+//        imageFood.setImageResource(R.drawable.tipatcantok);
         qty=1;
         dec_btn.setOnClickListener(new View.OnClickListener() {
             @Override

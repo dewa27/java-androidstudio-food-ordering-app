@@ -1,18 +1,21 @@
 package id.progmoblanjut.modul1.model;
 
 public class CartModel {
-    private int id_cart;
-    private FoodModel food;
-    private int id_customer;
+    public int id_cart;
+    public FoodModel food;
+    public int id_customer;
     private int cart_qty;
     private String notes;
+    private String status;
 
-    public CartModel(int id_cart, FoodModel food, int id_customer, int cart_qty,String notes) {
+
+    public CartModel(int id_cart, FoodModel food, int id_customer, int cart_qty, String notes, String status) {
         this.id_cart = id_cart;
         this.food = food;
         this.id_customer = id_customer;
         this.cart_qty = cart_qty;
         this.notes=notes;
+        this.status=status;
     }
 
     public int getId_cart() {

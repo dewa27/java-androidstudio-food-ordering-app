@@ -3,7 +3,11 @@ package id.progmoblanjut.modul1.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import id.progmoblanjut.modul1.AddToCartActivity;
+import id.progmoblanjut.modul1.DownloadImageTask;
 import id.progmoblanjut.modul1.MainActivity;
 import id.progmoblanjut.modul1.WelcomeActivity;
 import id.progmoblanjut.modul1.database.DbHelper;
@@ -53,7 +59,10 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.food_name_ph.setText(foodData.get(position).getFood_name());
         holder.price_ph.setText(foodData.get(position).getPrice(1));
-        holder.food_filename_ph.setImageResource(Integer.parseInt(foodData.get(position).getFood_filename()));
+//        holder.food_filename_ph.setImageResource(Integer.parseInt(foodData.get(position).getFood_filename()));
+//        holder.food_filename_ph.setImageResource(R.drawable.tipatcantok);
+        new DownloadImageTask((ImageView) holder.food_filename_ph).execute(DownloadImageTask.imageUrl+foodData.get(position).getFood_filename());
+
         holder.add_to_cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
@@ -63,7 +72,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
                 intent.putExtra("food_model", json);
                 holder.add_to_cart.getContext().startActivity(intent);
 //                db.insertCartData(foodData.get(position).getIdFood(),loggedCustomerData.getId_customer());
-                Toast.makeText(v.getContext(), "Data masooook", Toast.LENGTH_LONG).show();
+//                Toast.makeText(v.getContext(), "Data masooook", Toast.LENGTH_LONG).show();
             }
         });
     }
