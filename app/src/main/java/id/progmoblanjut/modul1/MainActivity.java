@@ -82,8 +82,12 @@ public class MainActivity extends AppCompatActivity {
         searchText=findViewById(R.id.searchText);
         loadingProgressBar=findViewById(R.id.progressBar4);
 
-        Retrofit retrofit= new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create()).build();
-        foodOrderingAPI=retrofit.create(FoodOrderingAPI.class);
+        try {
+            Retrofit retrofit = new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create()).build();
+            foodOrderingAPI = retrofit.create(FoodOrderingAPI.class);
+        }catch (Exception e){
+
+        }
         Gson gson = new Gson();
         mPrefs= this.getSharedPreferences("pref",0);
         String json = mPrefs.getString("loggedCustomerData", "");
@@ -239,15 +243,15 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
         db=new DbHelper(this);
+        String rec_category_id_str= getIntent().getStringExtra("rek_menu_id_str");
 //        db.makeFoodMasterData();
-//        String rec_category_id_str= getIntent().getStringExtra("rek_menu_id_str");
 //        Toast.makeText(getApplicationContext(), "Arr Str : " + rec_category_id_str, Toast.LENGTH_LONG).show();
 //        foodDummyData=db.getFoodMasterData();
 //        forYouDummyData=db.getFoodMasterData();
 
 
         getFood();
-        getRecommendedFood(loggedCustomerData.getRekomendasi_id());
+        getRecommendedFood(loggedCustomerData.getRekomendasi());
     }
 
     protected void getFood(){
@@ -309,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ArrayList<FoodModel>> call, Throwable t) {
                 Log.d("api",t.getMessage());
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Anda tidak terkoneksi dengan server", Toast.LENGTH_LONG).show();
                 foodDummyData=db.getFoodMasterData();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -348,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ArrayList<FoodModel>> call, Throwable t) {
                 Log.d("api",t.getMessage());
-                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Anda tidak terkoneksi dengan server", Toast.LENGTH_LONG).show();
                 forYouRecyclerView.setVisibility(View.VISIBLE);
                 forYouDummyData=db.getFoodMasterData();
                 forYouAdapter= new FoodAdapter(getApplicationContext(),forYouDummyData);

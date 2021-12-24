@@ -239,7 +239,7 @@ public class PaymentActivity extends AppCompatActivity {
 
                             @Override
                             public void onFailure(Call<Result> call, Throwable t) {
-                                Toast.makeText(getApplicationContext(),t.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(),"Anda tidak terkoneksi dengan server", Toast.LENGTH_LONG).show();
                             }
                         });
                     }

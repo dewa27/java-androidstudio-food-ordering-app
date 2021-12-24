@@ -180,7 +180,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH::mm::ss");
                                 LocalDateTime now = LocalDateTime.now();
                                 String tgl_hari_ini=dtf.format(now);
-                                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Anda tidak terkoneksi dengan server", Toast.LENGTH_LONG).show();
                                 long resultInsert=db.insertCustData(nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,null,tgl_hari_ini,tgl_hari_ini);
 
                                 loggedCustData=new CustomerModel((int)resultInsert,nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,tgl_hari_ini,tgl_hari_ini);
