@@ -28,6 +28,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import id.progmoblanjut.modul1.adapter.FoodAdapter;
+import id.progmoblanjut.modul1.database.ConnectionCheck;
 import id.progmoblanjut.modul1.database.DbHelper;
 import id.progmoblanjut.modul1.database.FoodOrderingAPI;
 import id.progmoblanjut.modul1.model.CustomerModel;
@@ -94,6 +95,15 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager nLayoutManager = new GridLayoutManager(this, 2);
         foodRecyclerView.setLayoutManager(mLayoutManager);
         forYouRecyclerView.setLayoutManager(nLayoutManager);
+
+
+        if(!ConnectionCheck.isNetworkConnected(this) && !ConnectionCheck.isInternetAvailable()){
+            Toast.makeText(this, "Tidak terkoneksi !", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(this, "Terkoneksi !", Toast.LENGTH_LONG).show();
+        }
+
+
 
         imgBtnFish.setOnClickListener(new View.OnClickListener() {
             public void onClick(View button) {
@@ -234,6 +244,8 @@ public class MainActivity extends AppCompatActivity {
 //        Toast.makeText(getApplicationContext(), "Arr Str : " + rec_category_id_str, Toast.LENGTH_LONG).show();
 //        foodDummyData=db.getFoodMasterData();
 //        forYouDummyData=db.getFoodMasterData();
+
+
         getFood();
         getRecommendedFood(loggedCustomerData.getRekomendasi_id());
     }

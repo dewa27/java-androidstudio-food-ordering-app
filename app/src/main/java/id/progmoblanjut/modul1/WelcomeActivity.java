@@ -4,10 +4,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -82,6 +84,9 @@ public class WelcomeActivity extends AppCompatActivity {
             finish();
         }
 
+
+
+
         builder= new AlertDialog.Builder(WelcomeActivity.this);
         db=new DbHelper(this);
         sb_jmlOrang.setProgress(1);
@@ -121,76 +126,86 @@ public class WelcomeActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Harap isi nama dan pilihan rekomendasi menu", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                builder.setMessage("Nama : " + nama + "\nJumlah Orang : " + jmlOrang + " Orang \n" + chosenDineOrBungkus + "\nRekomendasi Menu :\n" + rekomendasiMenu).setTitle("Isi Form");
-                dialog=builder.create();
-                dialog.show();
 
-                Retrofit retrofit= new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create()).build();
-                foodOrderingAPI=retrofit.create(FoodOrderingAPI.class);
+                AlertDialog.Builder builder = new AlertDialog.Builder(WelcomeActivity.this);
+                builder.setTitle("Cek Ulang Data");
+                builder.setMessage(Html.fromHtml(String.format("Hai <b>%s ! </b><br>Makanan anda akan di%s dengan jumlah %d orang dan menu yang anda pilih adalah %s<br><br><b>Apakah anda yakin dengan pilihan anda ?</b>",nama,chosenDineOrBungkus.toLowerCase(),jmlOrang,rekomendasiMenu)));
 
-                call=foodOrderingAPI.createUser(nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str);
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if(!response.isSuccessful()){
-                            Log.d("dewa27",String.valueOf(response.code()));
-                            Toast.makeText(getApplicationContext(), "Code : " + Integer.toString(response.code()), Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        try{
-                            String json_res=response.body().string();
-                            customerFromAPI=gson.fromJson(json_res,CustomerModel.class);
-                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH::mm::ss");
-                            LocalDateTime now = LocalDateTime.now();
-                            String tgl_hari_ini=dtf.format(now);
-                            long resultInsert=db.insertCustData(nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,customerFromAPI.getUuid(),tgl_hari_ini,tgl_hari_ini);
+                builder.setPositiveButton("Yakin", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Retrofit retrofit= new Retrofit.Builder().baseUrl(baseUrl).addConverterFactory(GsonConverterFactory.create()).build();
+                        foodOrderingAPI=retrofit.create(FoodOrderingAPI.class);
+                        call=foodOrderingAPI.createUser(nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str);
+                        call.enqueue(new Callback<ResponseBody>() {
+                            @Override
+                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                if(!response.isSuccessful()){
+                                    Log.d("dewa27",String.valueOf(response.code()));
+                                    Toast.makeText(getApplicationContext(), "Code : " + Integer.toString(response.code()), Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                try{
+                                    String json_res=response.body().string();
+                                    customerFromAPI=gson.fromJson(json_res,CustomerModel.class);
+                                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH::mm::ss");
+                                    LocalDateTime now = LocalDateTime.now();
+                                    String tgl_hari_ini=dtf.format(now);
+                                    long resultInsert=db.insertCustData(nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,customerFromAPI.getUuid(),tgl_hari_ini,tgl_hari_ini);
 
-                            loggedCustData=new CustomerModel((int)resultInsert,nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,customerFromAPI.getCreated_at(),customerFromAPI.getUpdated_at());
-                            loggedCustData.setRekomendasi_id(cb_temp_id_str);
-                            loggedCustData.setUuid(customerFromAPI.getUuid());
-                            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                            String json = gson.toJson(loggedCustData);
-                            prefsEditor.putString("loggedCustomerData", json);
-                            prefsEditor.commit();
-                            intent = new Intent(WelcomeActivity.this, MainActivity.class);
-                            intent.putExtra("nama", nama);
-                            intent.putExtra("jml_orang", jmlOrang);
-                            intent.putExtra("tipe", chosenDineOrBungkus);
-                            intent.putExtra("rek_menu", rekomendasiMenu);
-                            intent.putExtra("rek_menu_id_str", cb_temp_id_str);
-                            startActivity(intent);
-                            finish();
+                                    loggedCustData=new CustomerModel((int)resultInsert,nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,customerFromAPI.getCreated_at(),customerFromAPI.getUpdated_at());
+                                    loggedCustData.setRekomendasi_id(cb_temp_id_str);
+                                    loggedCustData.setUuid(customerFromAPI.getUuid());
+                                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                                    String json = gson.toJson(loggedCustData);
+                                    prefsEditor.putString("loggedCustomerData", json);
+                                    prefsEditor.commit();
+                                    intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                                    intent.putExtra("nama", nama);
+                                    intent.putExtra("jml_orang", jmlOrang);
+                                    intent.putExtra("tipe", chosenDineOrBungkus);
+                                    intent.putExtra("rek_menu", rekomendasiMenu);
+                                    intent.putExtra("rek_menu_id_str", cb_temp_id_str);
+                                    startActivity(intent);
+                                    finish();
 
-                        }catch(IOException ex)
-                        {
-                            Log.e("retrofit_error", ex.getMessage());
-                        }
+                                }catch(IOException ex)
+                                {
+                                    Log.e("retrofit_error", ex.getMessage());
+                                }
 
-                    }
+                            }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH::mm::ss");
-                        LocalDateTime now = LocalDateTime.now();
-                        String tgl_hari_ini=dtf.format(now);
-                        Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
-                        long resultInsert=db.insertCustData(nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,null,tgl_hari_ini,tgl_hari_ini);
+                            @Override
+                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH::mm::ss");
+                                LocalDateTime now = LocalDateTime.now();
+                                String tgl_hari_ini=dtf.format(now);
+                                Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+                                long resultInsert=db.insertCustData(nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,null,tgl_hari_ini,tgl_hari_ini);
 
-                        loggedCustData=new CustomerModel((int)resultInsert,nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,tgl_hari_ini,tgl_hari_ini);
-                        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                        String json = gson.toJson(loggedCustData);
-                        prefsEditor.putString("loggedCustomerData", json);
-                        prefsEditor.commit();
-                        intent = new Intent(WelcomeActivity.this, MainActivity.class);
-                        intent.putExtra("nama", nama);
-                        intent.putExtra("jml_orang", jmlOrang);
-                        intent.putExtra("tipe", chosenDineOrBungkus);
-                        intent.putExtra("rek_menu", rekomendasiMenu);
-                        intent.putExtra("rek_menu_id_str", cb_temp_id_str);
-                        startActivity(intent);
-                        finish();
+                                loggedCustData=new CustomerModel((int)resultInsert,nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,tgl_hari_ini,tgl_hari_ini);
+                                SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                                String json = gson.toJson(loggedCustData);
+                                prefsEditor.putString("loggedCustomerData", json);
+                                prefsEditor.commit();
+                                intent = new Intent(WelcomeActivity.this, MainActivity.class);
+                                intent.putExtra("nama", nama);
+                                intent.putExtra("jml_orang", jmlOrang);
+                                intent.putExtra("tipe", chosenDineOrBungkus);
+                                intent.putExtra("rek_menu", rekomendasiMenu);
+                                intent.putExtra("rek_menu_id_str", cb_temp_id_str);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
                     }
                 });
+                builder.setNegativeButton("Perbaiki", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
 
 //                if(customerFromAPI!=null){
 //                    long resultInsert=db.insertCustData(nama,jmlOrang,chosenDineOrBungkus,cb_temp_id_str,customerFromAPI.getUuid());

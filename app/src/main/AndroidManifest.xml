@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="id.progmoblanjut.modul1">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -12,9 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Modul1"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".CheckoutActivity"
-            android:exported="false" />
         <activity
             android:name=".AddToCartActivity"
             android:exported="false" />

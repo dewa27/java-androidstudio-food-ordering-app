@@ -36,6 +36,7 @@ import java.util.TimerTask;
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
 import id.progmoblanjut.modul1.adapter.PaymentItemAdapter;
+import id.progmoblanjut.modul1.database.ConnectionCheck;
 import id.progmoblanjut.modul1.database.DbHelper;
 import id.progmoblanjut.modul1.database.FoodOrderingAPI;
 import id.progmoblanjut.modul1.database.Result;
@@ -88,6 +89,11 @@ public class PaymentActivity extends AppCompatActivity {
         cartData = db.getCartData(loggedCustomerData.getId_customer(),"checkout");
         paymentModel=db.getPayment(loggedCustomerData.getId_customer());
 
+        if(!ConnectionCheck.isNetworkConnected(this) && !ConnectionCheck.isInternetAvailable()){
+            Toast.makeText(this, "Tidak terkoneksi dengan server!", Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(this, "Terkoneksi dengan server!", Toast.LENGTH_LONG).show();
+        }
 
         WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
